@@ -14,15 +14,30 @@ public class CardPlayer : MonoBehaviour
     public TMP_Text healthText;
     public HealthBar healthBar;
     public float Health;
-    public float MaxHealth;
+    public PlayerStats stats = new PlayerStats{
+        MaxHealth = 100,
+        RestoreValue = 5,
+        DamageValue = 10
+    };
 
     private Tweener animationTweener;
 
     public TMP_Text NickName { get => nameText; }
+    public bool IsReady = false;
 
     public void Start()
     {
-        Health = MaxHealth;
+        Health = stats.MaxHealth;
+    }
+
+    public void SetStats(PlayerStats newStats, bool RestoreFullHealth = false)
+    {
+        this.stats = newStats;
+        if (RestoreFullHealth)
+        {
+            Health = stats.MaxHealth;
+        }
+       UpdateHealthBar();
     }
 
     public Attack? AttackValue
@@ -50,6 +65,7 @@ public class CardPlayer : MonoBehaviour
     {
         if (chosenCard != null)
         {
+            chosenCard.transform.DOKill();
             chosenCard.Reset();
         }
 
@@ -60,12 +76,17 @@ public class CardPlayer : MonoBehaviour
     public void ChangeHealth(float amount)
     {
         Health += amount;
-        Health = Mathf.Clamp(Health, 0, 100);
+        Health = Mathf.Clamp(Health, 0, stats.MaxHealth);
+        UpdateHealthBar();
+    }
 
+    public void UpdateHealthBar()
+    {
         // healthbar 
-        healthBar.UpdateBar(Health / MaxHealth);
+        healthBar.UpdateBar(Health / stats.MaxHealth);
         //text
-        healthText.text = Health + "/" + MaxHealth;
+        healthText.text = Health + "/" + stats.MaxHealth;
+
     }
 
     public void AnimateAttack()

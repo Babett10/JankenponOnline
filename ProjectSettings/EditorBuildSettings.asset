@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/GamePlayCard.unity
     guid: e739f1421cf881b4b9470163ddd93a0e
+  - enabled: 1
+    path: Assets/Scenes/GamePlayCardBOT.unity
+    guid: 27dd83512af38f44aaf2574239cd1002
   m_configObjects: {}

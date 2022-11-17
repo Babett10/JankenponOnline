@@ -6,16 +6,36 @@ public class Bot : MonoBehaviour
 {
     public CardPlayer player;
     public CardGameManager gameManager;
-    public float choosingInterval;
+    public BotStats stats;
+    
 
     private float timer = 0;
 
     int lastSelected = 0;
     Cards[] cards;
+    public bool IsReady = false;
 
-    private void Start()
+    public void SetStats(BotStats newStats, bool RestoreFullHealth = false)
     {
-        cards = GetComponentsInChildren<Cards>();
+        this.stats = newStats;
+
+        var newPlayerStats = new PlayerStats
+        {
+            MaxHealth = this.stats.MaxHealth,
+            RestoreValue = this.stats.RestoreValue,
+            DamageValue = this.stats.DamageValue
+        };
+        player.SetStats(newPlayerStats, RestoreFullHealth);
+
+
+    }
+    IEnumerator Start()
+    {
+        cards = player.GetComponentsInChildren<Cards>();
+
+        yield return new WaitUntil(() => player.IsReady);
+        SetStats(this.stats);
+        this.IsReady = true;
     }
     
    
@@ -26,7 +46,7 @@ public class Bot : MonoBehaviour
             timer = 0;
             return;
         }
-        if (timer < choosingInterval)
+        if (timer < stats.ChoosingInterval)
         {
             timer += Time.deltaTime;
             return;
